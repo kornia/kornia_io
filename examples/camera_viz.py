@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 
 import kornia as K
-from kornia_io import CameraStream, CameraStreamBackend
+from kornia_io import CameraStream, CameraStreamBackend, Visualizer
 
 
 def my_app():
@@ -22,6 +22,9 @@ def my_app():
     #cap = CameraStream.create(CameraStreamBackend.LUXONIS_OAKD_RGB)
     cap = CameraStream.create(CameraStreamBackend.OPENCV)
     print(f"Before resize: {cap.meta}")
+
+    # create the visualizer object
+    viz = Visualizer()
 
     # compute scale
     scale: float = 1. * args.image_size / cap.meta['width']
@@ -47,14 +50,9 @@ def my_app():
     # set the preprocess to the video stream and device
     cap = cap.map(preprocess).to(device)
 
-    # create the detector object
-
-    cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
-
     while(True):
 
-        # Capture the video frame
-        # by frame
+        # Capture the video frame by frame
         frame: torch.Tensor = cap.get()
 
         start = cv2.getTickCount()
@@ -70,19 +68,11 @@ def my_app():
             frame_vis, f"FPS: {fps:.1f}", (10, 20), cv2.FONT_HERSHEY_DUPLEX, 0.5, (255, 255, 255))
 
         # Display the resulting frame
-        cv2.imshow('frame', frame_vis)
-
-        # the 'q' button is set as the
-        # quitting button you may use any
-        # desired button of your choice
-        if cv2.waitKey(1) == ord('q'):
-            break
+        viz.show_image('frame', frame)
+        viz.show_image('frame_out', frame_vis)
 
     # After the loop release the cap and writing objects
     cap.close()
-
-    # Destroy all the windows
-    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

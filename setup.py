@@ -10,6 +10,7 @@ setup(name='kornia_io',
           'kornia',
           'opencv-python',
           'depthai',
+          'visdom',
       ],
       extras_require={
           'dev': [
