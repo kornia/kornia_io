@@ -5,6 +5,7 @@ import torch
 import kornia as K
 
 from .camera_stream import CameraStreamBase
+from .image import Image, ImageColor
 
 
 class OpencvCameraStream(CameraStreamBase):
@@ -14,10 +15,10 @@ class OpencvCameraStream(CameraStreamBase):
     def get(self) -> torch.Tensor:
         _, frame = self._stream.read()
         frame_t: torch.Tensor = K.utils.image_to_tensor(
-            frame).to(self.device)
+            frame).to(self.device, torch.float32)
         if self._map_fn is not None:
             frame_t = self._map_fn(frame_t)
-        return frame_t
+        return Image.from_tensor(frame_t, ImageColor.BGR).convert_(ImageColor.RGB)
 
     def is_opened(self) -> bool:
         return self._stream.isOpened()

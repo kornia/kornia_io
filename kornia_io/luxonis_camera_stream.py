@@ -6,11 +6,13 @@ import torch
 import numpy as np
 import kornia as K
 
+from .image import Image, ImageColor
 from .camera_stream import CameraStreamBase, CameraStreamBackend
 
 
 class LuxonisCameraStream(CameraStreamBase):
     def __init__(self, camera_backend: CameraStreamBackend) -> None:
+        super().__init__(self)
         self.camera_backend = camera_backend
         self._dai_device: Optional[dai.Device] = None
 
@@ -48,13 +50,13 @@ class LuxonisCameraStream(CameraStreamBase):
 
         return True
     
-    def get(self) -> torch.Tensor:
+    def get(self) -> Image:
         frame: np.ndarray = self._q.get().getCvFrame()
         frame_t: torch.Tensor = K.utils.image_to_tensor(
-            frame).to(self.device)
+            frame).to(self.device, torch.float32)
         if self._map_fn is not None:
             frame_t = self._map_fn(frame_t)
-        return frame_t
+        return Image.from_tensor(frame_t, ImageColor.RGB)
 
     def set_size(self, size: Tuple[int, int]) -> None:
         """Set the image height and width."""
