@@ -11,7 +11,7 @@ import kornia as K
 from kornia_io import CameraStream, CameraStreamBackend, Visualizer
 
 
-def my_app():
+def my_app(args):
     # select the device
     device = torch.device('cpu')
     if args.cuda and torch.cuda.is_available():
@@ -80,4 +80,4 @@ if __name__ == "__main__":
     parser.add_argument('--image_size', default=640, type=int, help='the image size to process.')
     parser.add_argument('--cuda', dest='cuda', action='store_true')
     args = parser.parse_args()
-    my_app()
+    my_app(args)

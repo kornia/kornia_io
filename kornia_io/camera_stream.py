@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod, abstractproperty
 from enum import Enum
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Tuple
 
 import torch
 
@@ -15,7 +15,7 @@ class CameraStreamBackend(Enum):
 class CameraStreamBase(ABC):
     """Base class to represent a video stream camera."""
     @abstractmethod
-    def __init__(self, stream: Any) -> None:
+    def __init__(self, stream: Optional[Any] = None) -> None:
         self._stream = stream
         self._map_fn: Optional[Callable] = None
         self._device: torch.device = torch.device('cpu')
@@ -57,6 +57,10 @@ class CameraStreamBase(ABC):
         data['height'] = self.height
         data['fps'] = self.fps
         return data
+
+    @property
+    def resolution(self) -> Tuple[int, int]:
+        return (self.height, self.width)
 
     @abstractproperty
     def width(self) -> int:
