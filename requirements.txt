@@ -1,0 +1,11 @@
+torch
+kornia
+numpy
+opencv-python  # for cv2.VideoCapture
+depthai  # for CameraStreamBackend.LUXONIS_OAKD
+# for compiling in vpu/myriad
+onxx
+onnx-simplifier
+blobconverter
+# for examples
+torchvision
